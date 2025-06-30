@@ -15,6 +15,11 @@
 - [ ] Plan for Q2
 - [ ] Quarterly review
 
+## April
+- [ ] Finalize Q1 deliverables
+- [ ] Plan for Q2
+- [ ] Quarterly review
+
 ## Notes
 - Priority items are marked with 🔥
 - Completed items should be checked: [x]
