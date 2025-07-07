@@ -1,97 +1,165 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do List App</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📝 To-Do List App</h1>
+        <p>Kelola tugas Anda dengan mudah</p>
+        <button class="theme-toggle" onclick="toggleTheme()">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-text">Dark Mode</span>
+        </button>
+      </div>
 
-<head>
-    <!-- Primary Meta Tags -->
-    <title>jual sepatu murah bersih</title>
-    <meta name="title" content="jual sepatu murah bersih" />
-    <meta name="description" content="disini jualan sepatu  mantap murah banget" />
+      <div class="stats">
+        <div class="stat-card">
+          <h3>Total Tugas</h3>
+          <div class="value" id="totalTasks">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Selesai</h3>
+          <div class="value" id="completedTasks">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Aktif</h3>
+          <div class="value" id="activeTasks">0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Progress</h3>
+          <div class="value" id="progressPercent">0%</div>
+        </div>
+      </div>
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://metatags.io/" />
-    <meta property="og:title" content="jual sepatu murah bersih" />
-    <meta property="og:description" content="disini jualan sepatu  mantap murah banget" />
-    <meta property="og:image" content="https://metatags.io/images/meta-tags.png" />
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressBar"></div>
+      </div>
 
-    <!-- X (Twitter) -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://metatags.io/" />
-    <meta property="twitter:title" content="jual sepatu murah bersih" />
-    <meta property="twitter:description" content="disini jualan sepatu  mantap murah banget" />
-    <meta property="twitter:image" content="https://metatags.io/images/meta-tags.png" />
+      <div class="controls">
+        <div class="input-group">
+          <input
+            type="text"
+            id="taskInput"
+            placeholder="Tambah tugas baru..."
+          />
+          <select id="categoryInput">
+            <option value="personal">Personal</option>
+            <option value="work">Pekerjaan</option>
+            <option value="shopping">Belanja</option>
+            <option value="health">Kesehatan</option>
+            <option value="study">Belajar</option>
+          </select>
+          <select id="priorityInput">
+            <option value="low">Prioritas Rendah</option>
+            <option value="medium">Prioritas Sedang</option>
+            <option value="high">Prioritas Tinggi</option>
+          </select>
+          <input type="date" id="dueDateInput" />
+          <button class="btn-primary" onclick="addTask()">Tambah</button>
+        </div>
 
-    <!-- FAVICON -->
-    <link rel="apple-touch-icon" sizes="57x57" href="assets/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="assets/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="assets/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="assets/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="assets/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="assets/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="assets/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="assets/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="assets/favicon/manifest.json">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="assets/favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
-</head>
+        <div class="filters">
+          <input
+            type="text"
+            class="search-box"
+            id="searchInput"
+            placeholder="Cari tugas..."
+            oninput="filterTasks()"
+          />
+          <button
+            class="filter-btn filter-all active"
+            onclick="setFilter('all')"
+          >
+            Semua
+          </button>
+          <button
+            class="filter-btn filter-active"
+            onclick="setFilter('active')"
+          >
+            Aktif
+          </button>
+          <button
+            class="filter-btn filter-completed"
+            onclick="setFilter('completed')"
+          >
+            Selesai
+          </button>
+          <select onchange="sortTasks(this.value)">
+            <option value="date-desc">Terbaru</option>
+            <option value="date-asc">Terlama</option>
+            <option value="priority">Prioritas</option>
+            <option value="duedate">Tanggal Jatuh Tempo</option>
+          </select>
+          <div class="json-controls">
+            <button class="btn-export" onclick="exportTasksAsJSON()">
+              📥 Export JSON
+            </button>
+            <input
+              type="file"
+              id="jsonFileInput"
+              accept=".json"
+              style="display: none"
+              onchange="importTasksFromJSON(this.files[0])"
+            />
+            <button
+              class="btn-import"
+              onclick="document.getElementById('jsonFileInput').click()"
+            >
+              📤 Import JSON
+            </button>
+          </div>
+        </div>
+      </div>
 
-<body>
-    <header>
-        <nav></nav>
-    </header>
-    <main>
-        <aside></aside>
-        <article></article>
-        <section>
-            <!-- FaQ -->
-            <div>
-                <h3>ini component Faq test</h3>
-                <dl>
-                    <dt>apa nama service sadasd?</dt>
-                    <dd>Revou class</dd>
+      <div class="todo-list" id="todoList">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+            />
+          </svg>
+          <h3>Belum ada tugas</h3>
+          <p>Mulai tambahkan tugas Anda!</p>
+        </div>
+      </div>
+    </div>
 
-                    
-                    <dt>siapa raja biasdasd natang?</dt>
-                    <dd>Singa</dd>
-                </dl>
-            </div>
-
-            <hr/>
-
-            <!-- testimoni -->
-            <div>
-                <h3>Ini section testimoni</h3>
-                <div>
-                    <p>ini testimoni 1</p>
-                    <blockquote>
-                        bagus banget!!!
-                    </blockquote>
-                </div>
-                <div>
-                    <p>ini testimoni 2</p>
-                    <blockquote>
-                        bagus banget!!!
-                    </blockquote>
-                </div>
-                <div>
-                    <p>ini testimoni 3</p>
-                    <blockquote>
-                        bagus banget!!!
-                    </blockquote>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-
-    </footer>
-</body>
-
+    <div class="modal" id="editModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Edit Tugas</h2>
+          <button class="btn-icon" onclick="closeEditModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="editTaskInput" placeholder="Nama tugas" />
+          <select id="editCategoryInput">
+            <option value="personal">Personal</option>
+            <option value="work">Pekerjaan</option>
+            <option value="shopping">Belanja</option>
+            <option value="health">Kesehatan</option>
+            <option value="study">Belajar</option>
+          </select>
+          <select id="editPriorityInput">
+            <option value="low">Prioritas Rendah</option>
+            <option value="medium">Prioritas Sedang</option>
+            <option value="high">Prioritas Tinggi</option>
+          </select>
+          <input type="date" id="editDueDateInput" />
+          <button class="btn-primary" onclick="updateTask()">
+            Simpan Perubahan
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
 </html>
